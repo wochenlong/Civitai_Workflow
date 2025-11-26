@@ -77,38 +77,41 @@ config:
       switch_boundary_every: 1
       loss_type: mse
     model:
-      name_or_path: "/.autodl/black-forest-labs/FLUX.2-dev"
-      quantize: true
-      qtype: qfloat8
-      quantize_te: true
-      qtype_te: qfloat8
+      name_or_path: "/.autodl/black-forest-labs/FLUX.2-dev" # 模型路径, 指向您本地缓存的模型文件夹
+      quantize: true # [显存优化] 是否量化模型主体。True可以显著降低显存和提高速度，但可能轻微影响精度。
+      qtype: qfloat8 # [显存优化] 量化类型, qfloat8是一种积极的量化方式。
+      quantize_te: true # [显存优化] 是否量化文本编码器(TE)。对于大型文本编码器(如Mistral), 强烈建议开启。
+      qtype_te: qfloat8 # [显存优化] 文本编码器的量化类型。
       arch: flux2
-      low_vram: true
+      low_vram: true # [显存优化] 是否开启低显存模式。会把不用的模型组件卸载到CPU, 以节省显存。
       model_kwargs:
         match_target_res: true
-      layer_offloading: false
+      layer_offloading: false # [显存优化] 更精细的层卸载控制, low_vram开启时通常不用额外设置。
       layer_offloading_text_encoder_percent: 1
       layer_offloading_transformer_percent: 1
-    sample:
-      sampler: flowmatch
-      sample_every: 250
-      width: 1024
-      height: 1024
-      samples:
-      - prompt: xingstyle, teddy bear, crystal sculpture, geometric design, red color,
-          reflective surface, polygonal structure, glossy finish, decorative art,
-          bow tie, faceted texture, transparent appearance, modern artwork, shiny,
-          collectible item, ornamental figurine, abstract teddy bear, 3D rendering,
-          creative design.
-      - prompt: xingstyle, 3d,1dog
-      - prompt: xingstyle, 3d,1cat
-      neg: ''
-      seed: 42
-      walk_seed: true
-      guidance_scale: 4
-      sample_steps: 25
-      num_frames: 1
-      fps: 1
+    # === 预览图生成 (已禁用) ===
+    # 为了节省大约10GB显存, 以下sample部分已被注释掉。
+    # 如果需要重新开启, 请取消注释并确保有足够显存。
+    # sample:
+    #   sampler: flowmatch
+    #   sample_every: 250 # 每训练250步生成一次预览图
+    #   width: 1024
+    #   height: 1024
+    #   samples:
+    #   - prompt: xingstyle, teddy bear, crystal sculpture, geometric design, red color,
+    #       reflective surface, polygonal structure, glossy finish, decorative art,
+    #       bow tie, faceted texture, transparent appearance, modern artwork, shiny,
+    #       collectible item, ornamental figurine, abstract teddy bear, 3D rendering,
+    #       creative design.
+    #   - prompt: xingstyle, 3d,1dog
+    #   - prompt: xingstyle, 3d,1cat
+    #   neg: ''
+    #   seed: 42
+    #   walk_seed: true
+    #   guidance_scale: 4
+    #   sample_steps: 25
+    #   num_frames: 1
+    #   fps: 1
 meta:
   name: flux2
   version: '1.0'
